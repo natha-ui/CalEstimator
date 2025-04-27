@@ -1,6 +1,7 @@
 # CalEstimator
 Model for Calorie Estimation
-YOLOv10s
+Addition to YOLOv10s from James Lahm, and YOLOv10: Real-Time End-to-End Object Detection
+Ao Wang, Hui Chen, Lihao Liu, Kai Chen, Zijia Lin, Jungong Han, Guiguang Ding https://arxiv.org/abs/2405.14458
 
 
 DATA302 KOREA UNIVERSITY
