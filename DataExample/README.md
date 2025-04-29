@@ -1,8 +1,11 @@
 FooDD dataset, total number of classes: 
 
 1: Apple
+
 2: Apricot
+
 3: Aubergine
+
 4: Avocado
 
 5: Banana
