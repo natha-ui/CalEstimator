@@ -1,32 +1,24 @@
 from ultralytics.engine.model import Model
-from ultralytics.nn.tasks import YOLOv10DetectionModel
+from ultralytics.nn.tasks import CalorieEstimationModel
+from .val import CalorieEstimationValidator
+from .predict import CalorieEstimationPredictor
+from .train import CalorieEstimationTrainer
 from huggingface_hub import PyTorchModelHubMixin
 
-
-class YOLOv10(Model, PyTorchModelHubMixin, model_card_template=card_template_text):
-
-    def __init__(self, model="yolov10s.pt", task=None, verbose=False,
-                 names=None):
+class CalorieEstimator(Model, PyTorchModelHubMixin):
+    def __init__(self, model="calorie-estimator.pt", task=None, verbose=False, 
+                 food_classes=None, calorie_map=None):
         super().__init__(model=model, task=task, verbose=verbose)
-        if names is not None:
-            setattr(self.model, 'names', names)
-
-    def push_to_hub(self, repo_name, **kwargs):
-        config = kwargs.get('config', {})
-        config['names'] = self.names
-        config['model'] = self.model.yaml['yaml_file']
-        config['task'] = self.task
-        kwargs['config'] = config
-        super().push_to_hub(repo_name, **kwargs)
-
+        self.food_classes = food_classes or DEFAULT_FOOD_CLASSES
+        self.calorie_map = calorie_map or DEFAULT_CALORIE_MAP
+        
     @property
     def task_map(self):
-        """Map head to model, trainer, validator, and predictor classes."""
         return {
-            "detect": {
-                "model": YOLOv10DetectionModel,
-                "trainer": YOLOv10DetectionTrainer,
-                "validator": YOLOv10DetectionValidator,
-                "predictor": YOLOv10DetectionPredictor,
-            },
+            "calorie": {
+                "model": CalorieEstimationModel,
+                "trainer": CalorieEstimationTrainer,
+                "validator": CalorieEstimationValidator,
+                "predictor": CalorieEstimationPredictor,
+            }
         }
