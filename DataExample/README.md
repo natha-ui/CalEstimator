@@ -1,4 +1,4 @@
-FooDD dataset, total number of classes: 
+FooDD dataset, total number of classes: 54
 
 1: Apple
 
