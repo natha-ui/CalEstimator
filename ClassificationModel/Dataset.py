@@ -1,5 +1,7 @@
 import shutil
 from pathlib import Path
+import random
+import zipfile
 
 def flatten_dataset(source_root: str, target_root: str, splits=('train','val','test')):
     source_root = Path(source_root)
@@ -44,7 +46,37 @@ def flatten_dataset(source_root: str, target_root: str, splits=('train','val','t
 # Example usage:
 # flatten_dataset_by_split("food-101-resized", "food-101-ultralytics")
 
+def extractSmall(input_dir, output_dir, num_classes, num_examples, create_zip=False):
+    counts = [len([f for f in Path(input_dir+"/train/apple_pie").rglob("*") if f.is_file()]),
+              len([f for f in Path(input_dir+"/val/apple_pie").rglob("*") if f.is_file()]),
+              len([f for f in Path(input_dir+"/test/apple_pie").rglob("*") if f.is_file()])]
+    input_dir = Path(input_dir)
+    output_dir = Path(output_dir)
+    splits = ['train', 'val', 'test']
+    
 
-# gets labels and splits from dataset file
-def writeYAML(file):
-    pass
+    class_names = random.sample([d.name for d in (input_dir / 'train').iterdir() if d.is_dir()], k=num_classes)
+    print(class_names)
+
+    i = 0
+    for split in splits:
+        for class_name in class_names:
+            src_class_dir = input_dir / split / class_name
+            dst_class_dir = output_dir / split / class_name
+            dst_class_dir.mkdir(parents=True, exist_ok=True)
+
+            files = [f for f in src_class_dir.iterdir() if f.is_file()]
+            count = (int)(num_examples*counts[i])
+            sampled = random.sample(files, k=count)
+
+            for file in sampled:
+                shutil.copy2(file, dst_class_dir / file.name)
+
+        i += 1
+            # if create_zip: zip_path = shutil.make_archive(str(output_dir), 'zip', str(output_dir))
+
+    # print(f"Extracted {num_classes} classes with {num_examples} examples each to: {output_dir}")
+    # if create_zip: print(f"Zipped dataset saved to: {zip_path}")
+
+# Example usage:
+# extractSmall("food-101", "food-10-small", numClasses=10, numExamples=20)
